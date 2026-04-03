@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FitGenius AI - Master Edition Pro + Premium Funnel</title>
+    <style>
+        :root { --neon: #00ffcc; --bg: #050505; --card: #111; --gold: #ffcc00; --level-up: #ff0055; --tip: #0096ff; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: white; margin: 0; display: flex; align-items: center; justify-content: center; min-height: 100vh; top: 0 !important; }
+        .container { width: 95%; max-width: 550px; padding: 20px; position: relative; }
+        #google_translate_element { position: absolute; top: 0px; left: 15px; z-index: 1000; }
+        .goog-te-gadget-simple { background-color: #222 !important; border: 1px solid #444 !important; border-radius: 8px !important; padding: 6px 10px !important; font-family: 'Segoe UI', sans-serif !important; }
+        .goog-te-gadget-simple span { color: white !important; font-size: 13px !important; }
+        .goog-te-gadget-icon { display: none; }
+        .skiptranslate iframe { display: none !important; }
+        .card { background: var(--card); padding: 30px; border-radius: 25px; border: 1px solid #333; box-shadow: 0 10px 40px rgba(0,0,0,0.5); margin-top: 30px; }
+        .step { display: none; }
+        .step.active { display: block; animation: fadeIn 0.4s; }
+        h2 { color: var(--neon); margin: 0 0 15px 0; }
+        input, select { width: 100%; padding: 15px; margin: 10px 0; border-radius: 12px; border: 1px solid #333; background: #000; color: white; font-size: 16px; outline: none; box-sizing: border-box; }
+        input:focus, select:focus { border-color: var(--neon); }
+        .btn { background: var(--neon); color: black; border: none; padding: 18px; border-radius: 12px; font-weight: bold; cursor: pointer; width: 100%; font-size: 18px; transition: 0.3s; margin-top: 10px; }
+        .btn:hover { transform: scale(1.02); box-shadow: 0 0 20px var(--neon); }
+        .premium-btn { background: linear-gradient(45deg, #ffcc00, #ff9900); color: #000; box-shadow: 0 0 15px rgba(255,204,0,0.4); border: 2px solid #fff; animation: pulseGold 2s infinite; margin-top: 25px; }
+        .premium-btn:hover { transform: scale(1.05); box-shadow: 0 0 25px rgba(255,204,0,0.7); }
+        #main-app { display: none; width: 100%; text-align: center; margin-top: 30px; }
+        .workout-card { background: var(--card); padding: 25px; border-radius: 30px; border: 2px solid var(--neon); position: relative; transition: border-color 0.3s; }
+        .real-time { font-size: 14px; color: var(--neon); margin-bottom: 10px; font-weight: bold; }
+        .day-badge { background: var(--neon); color: black; padding: 5px 15px; border-radius: 20px; font-weight: bold; position: absolute; top: -15px; right: 20px; }
+        .level-badge { background: var(--level-up); color: white; padding: 5px 15px; border-radius: 20px; font-weight: bold; position: absolute; top: -15px; left: 20px; font-size: 12px; }
+        .daily-tip { background: rgba(0,150,255,0.1); border-right: 4px solid var(--tip); padding: 15px; border-radius: 10px; margin-bottom: 20px; color: #fff; font-size: 0.95em; text-align: right; }
+        .daily-tip b { color: var(--tip); }
+        .workout-list { text-align: right; margin: 20px 0; }
+        .ex-item { background: #1a1a1a; padding: 15px; border-radius: 12px; margin-bottom: 12px; border-right: 4px solid var(--neon); position: relative; }
+        .clickable { cursor: pointer; transition: 0.2s; }
+        .clickable:hover { transform: scale(1.02); background: #222; border-right: 6px solid var(--neon); }
+        .clickable::after { content: 'ℹ️ לחץ להסבר'; position: absolute; left: 15px; top: 15px; font-size: 11px; opacity: 0.8; color: var(--neon); background: rgba(0,255,204,0.1); padding: 3px 8px; border-radius: 10px; }
+        .ex-item b { color: var(--neon); display: block; font-size: 1.1em; }
+        .ex-item span { color: #bbb; font-size: 0.9em; display: block; margin-top: 5px; line-height: 1.4; }
+        .learning-card { border-color: var(--gold); }
+        .learning-item { border-right-color: var(--gold); }
+        .learning-item b { color: var(--gold); }
+        .learning-badge { background: var(--gold); }
+        .progress-bar { width: 100%; height: 8px; background: #222; border-radius: 10px; margin-top: 25px; overflow: hidden; }
+        .progress-fill { height: 100%; background: var(--neon); width: 0%; transition: 1s; }
+        .days-selector { display: flex; justify-content: space-between; margin: 15px 0; flex-wrap: wrap; gap: 5px; }
+        .day-check { background: #222; padding: 10px; border-radius: 8px; cursor: pointer; flex: 1; min-width: 45px; text-align: center; border: 1px solid #444; font-weight: bold; transition: 0.2s; }
+        .day-check.selected { background: var(--neon); color: black; border-color: white; transform: scale(1.05); }
+        .disclaimer { font-size: 11px; color: #777; margin-top: 35px; border-top: 1px solid #333; padding-top: 15px; line-height: 1.6; text-align: right; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px; }
+        .disclaimer b { color: #ff5555; }
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1000; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
+        .modal-content { background: var(--card); border: 2px solid var(--neon); padding: 30px; border-radius: 20px; width: 85%; max-width: 450px; text-align: right; position: relative; animation: popIn 0.3s; box-shadow: 0 0 40px rgba(0,255,204,0.15); max-height: 85vh; overflow-y: auto; }
+        .modal-close { position: absolute; top: 15px; left: 15px; background: none; border: none; color: white; font-size: 28px; cursor: pointer; }
+        .modal-title { color: white; margin-top: 0; border-bottom: 2px solid #333; padding-bottom: 15px; font-size: 22px; }
+        .modal-body { color: #ccc; font-size: 15px; line-height: 1.7; margin-top: 15px; }
+        .modal-section-title { color: var(--neon); font-size: 18px; font-weight: bold; margin-top: 20px; margin-bottom: 8px; }
+        .modal-section-content { background: rgba(255,255,255,0.03); padding: 12px; border-radius: 10px; border-right: 3px solid #444; }
+        .reset-btn { background: #333; color: white; border: 1px solid #555; padding: 12px 20px; border-radius: 8px; font-size: 14px; margin-top: 20px; cursor: pointer; width: 100%; transition: 0.2s; }
+        .reset-btn:hover { background: #ff0055; border-color: #ff0055; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        @keyframes pulseGold { 0% { box-shadow: 0 0 0 0 rgba(255,204,0,0.4); } 70% { box-shadow: 0 0 0 10px rgba(255,204,0,0); } 100% { box-shadow: 0 0 0 0 rgba(255,204,0,0); } }
+    </style>
+</head>
+<body>
+
+<div id="google_translate_element"></div>
+
+<div class="container">
+    <div id="quiz-flow" class="card">
+        <div id="step1" class="step active">
+            <h2>FitGenius AI Pro</h2>
+            <p>ברוך הבא! מה השם שלך?</p>
+            <input type="text" id="inName" placeholder="השם שלך">
+            <div style="background: #1a1a1a; padding: 15px; border-radius: 10px; margin-top: 20px; text-align: right; border-right: 4px solid #ff0055; font-size: 11px; color: #aaa; max-height: 120px; overflow-y: auto; line-height: 1.5;">
+                <b style="color: white; font-size: 13px;">תנאי שימוש והצהרת בריאות:</b><br><br>
+                1. <b>היעדר ייעוץ רפואי:</b> אפליקציה זו אינה מהווה תחליף לייעוץ רפואי או מאמן מוסמך.<br>
+                2. <b>הצהרת בריאות:</b> הנך מצהיר כי אתה בריא וכשיר לפעילות גופנית.<br>
+                3. <b>אחריות אישית:</b> המשתמש לוקח על עצמו את מלוא האחריות על ביצוע התרגילים.
+            </div>
+            <label style="display: flex; align-items: flex-start; gap: 10px; margin-top: 15px; font-size: 13px; cursor: pointer; color: #ddd;">
+                <input type="checkbox" id="legalCheck" style="width: 25px; height: 25px; cursor: pointer; margin-top: 2px;">
+                אני מאשר שקראתי והבנתי את האזהרות ואני כשיר להתאמן.
+            </label>
+            <button class="btn" onclick="checkLegalAndGo()">המשך</button>
+        </div>
+
+        <div id="step2" class="step">
+            <h2>התאמה אישית של התוכנית</h2>
+            <p>מה המטרה הגופנית העיקרית שלך?</p>
+            <select id="inGoal">
+                <option value="mass">בניית מסה, כוח ופיתוח גוף</option>
+                <option value="toning_f">חיטוב, עיצוב ישבן ורגליים</option>
+            </select>
+            <p>שכיבות סמיכה רצופות:</p>
+            <select id="inPushups">
+                <option value="0">0 עד 10</option>
+                <option value="1">11 עד 20</option>
+                <option value="2">21 עד 30</option>
+                <option value="3">31 ומעלה</option>
+            </select>
+            <p>מתח רחב (חזרות רצופות):</p>
+            <select id="inPullups">
+                <option value="0">עדיין לא מצליח</option>
+                <option value="1">1 עד 5 חזרות</option>
+                <option value="2">5 ומעלה</option>
+            </select>
+            <p>סביבת אימון:</p>
+            <select id="inLoc">
+                <option value="בית">בית (משקל גוף)</option>
+                <option value="חדר כושר">חדר כושר (מכשירים)</option>
+            </select>
+            <p>זמן אימון:</p>
+            <select id="inDuration">
+                <option value="30">30 דקות</option>
+                <option value="60">שעה אחת</option>
+                <option value="90">שעה וחצי</option>
+            </select>
+            <button class="btn" onclick="toStep(3)">המשך</button>
+        </div>
+
+        <div id="step3" class="step">
+            <h2>לו"ז שבועי</h2>
+            <p>סמן ימי אימון פיזי:</p>
+            <div class="days-selector">
+                <div class="day-check" onclick="toggleDay(this, 0)">א'</div>
+                <div class="day-check" onclick="toggleDay(this, 1)">ב'</div>
+                <div class="day-check" onclick="toggleDay(this, 2)">ג'</div>
+                <div class="day-check" onclick="toggleDay(this, 3)">ד'</div>
+                <div class="day-check" onclick="toggleDay(this, 4)">ה'</div>
+                <div class="day-check" onclick="toggleDay(this, 5)">ו'</div>
+                <div class="day-check" onclick="toggleDay(this, 6)">ש'</div>
+            </div>
+            <button class="btn" onclick="finishQuiz()">בנה לי את התוכנית!</button>
+        </div>
+    </div>
+
+    <div id="main-app">
+        <div class="workout-card" id="cardElement">
+            <div id="virtualTime" class="real-time"></div>
+            <div class="day-badge" id="dayLabel">יום 1</div>
+            <div class="level-badge" id="levelLabel">רמה 1</div>
+            <h1 id="userHello">שלום!</h1>
+            <p id="planInfo" style="color:#aaa; font-size: 0.9em; margin-bottom: 15px;"></p>
+
+            <button class="btn premium-btn" onclick="checkPremiumAccess()">👑 לחץ כאן לתוכנית תזונה Premium</button>
+
+            <div id="dailyTip" class="daily-tip" style="margin-top:20px;"></div>
+            <div class="workout-list" id="workoutList"></div>
+            <button class="btn" onclick="completeDay()">סיימתי, עבור ליום הבא 🚀</button>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <p id="progressStat" style="font-size:11px; color:#555; margin-top:8px;"></p>
+        <div class="disclaimer">
+            <b>הבהרת בינה מלאכותית (AI) ואחריות משתמש:</b><br>
+            תוכנית אימונים זו הופקה אוטומטית באמצעות מודל בינה מלאכותית. האפליקציה אינה תחליף לייעוץ רפואי או הדרכה מקצועית. התרגילים מבוצעים על אחריותך הבלעדית.
+        </div>
+        <button class="reset-btn" onclick="resetApp()">⚠️ איפוס המערכת והתחלה מחדש</button>
+    </div>
+</div>
+
+<!-- מודאל תרגיל -->
+<div class="modal-overlay" id="exerciseModal" onclick="closeModal('exerciseModal')">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <button class="modal-close" onclick="closeModal('exerciseModal')">&times;</button>
+        <h2 class="modal-title" id="modalTitle">שם התרגיל</h2>
+        <div class="modal-body" id="modalDesc"></div>
+    </div>
+</div>
+
+<!-- מודאל קוד גישה -->
+<div class="modal-overlay" id="unlockModal" onclick="closeModal('unlockModal')">
+    <div class="modal-content" onclick="event.stopPropagation()" style="border-color: var(--gold); text-align: center;">
+        <button class="modal-close" onclick="closeModal('unlockModal')">&times;</button>
+        <h2 class="modal-title" style="color: var(--gold); border-bottom-color: var(--gold); text-align: center;">🔒 אזור סגור ללקוחות VIP</h2>
+        <div class="modal-body" style="text-align: center;">
+            <p>הכנס את קוד הגישה הסודי כדי לפתוח את שאלון התזונה המלא:</p>
+            <input type="text" id="secretCodeInput" placeholder="הקש קוד..." style="border-color: var(--gold); text-align: center; letter-spacing: 2px; font-weight: bold; font-size: 20px;">
+            <button class="btn premium-btn" onclick="verifyPremiumCode()" style="margin-top: 15px;">פתח שאלון 🔓</button>
+            <p style="margin-top: 25px; font-size: 14px; color: #bbb;">
+                אין לך קוד גישה?<br><br>
+                <a href="javascript:void(0)" onclick="askForCodeWhatsApp()" style="color: var(--neon); text-decoration: none; border: 1px solid var(--neon); padding: 8px 15px; border-radius: 8px; display: inline-block;">שלח הודעה ללופו לקבלת הקוד! 💬</a>
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- מודאל תזונה Premium -->
+<div class="modal-overlay" id="nutritionModal" onclick="closeModal('nutritionModal')">
+    <div class="modal-content" onclick="event.stopPropagation()" style="border-color: var(--gold);">
+        <button class="modal-close" onclick="closeModal('nutritionModal')">&times;</button>
+        <h2 class="modal-title" style="color: var(--gold); border-bottom-color: var(--gold);">👑 תוכנית תזונה אישית</h2>
+        <div class="modal-body">
+            <p>הקוד אומת! מלא את הפרטים ונשלח אותם ישירות ללופו לבניית תוכנית מותאמת:</p>
+            <input type="number" id="nutAge" placeholder="גיל (למשל: 25)">
+            <input type="number" id="nutWeight" placeholder="משקל נוכחי (בק''ג)">
+            <input type="number" id="nutHeight" placeholder="גובה (בס''מ)">
+            <select id="nutGoalPref">
+                <option value="מסה">עלייה במסת שריר (מסה)</option>
+                <option value="חיטוב">ירידה באחוזי שומן (חיטוב)</option>
+                <option value="שמירה">שמירה על הקיים (תחזוקה)</option>
+            </select>
+            <select id="nutDietType">
+                <option value="רגיל">אוכל הכל (ללא מגבלות)</option>
+                <option value="צמחוני">צמחוני</option>
+                <option value="טבעוני">טבעוני</option>
+                <option value="ללא גלוטן">ללא גלוטן</option>
+                <option value="כשר">מקפיד על כשרות מלאה</option>
+            </select>
+            <input type="text" id="nutAllergies" placeholder="אלרגיות מיוחדות? (אם אין, השאר ריק)">
+            <button class="btn premium-btn" onclick="sendToWhatsApp()" style="margin-top: 15px;">שלח נתונים לוואטסאפ של לופו 💬</button>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    function googleTranslateElementInit() {
+        new google.translate.TranslateElement({
+            pageLanguage: 'iw',
+            includedLanguages: 'en,iw',
+            layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+        }, 'google_translate_element');
+    }
+</script>
+<script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+<script>
+    var day = parseInt(localStorage.getItem('fDay')) || 0;
+    var level = parseInt(localStorage.getItem('fLevel')) || 1;
+    var userName = localStorage.getItem('fName');
+    var loc = localStorage.getItem('fLoc');
+    var dur = parseInt(localStorage.getItem('fDur')) || 60;
+    var pushLv = parseInt(localStorage.getItem('fPushups')) || 0;
+    var pullLv = parseInt(localStorage.getItem('fPullups')) || 0;
+    var goalLv = localStorage.getItem('fGoal') || "mass";
+    var trainDays = JSON.parse(localStorage.getItem('fTrainDays')) || [];
+    var workoutCounter = parseInt(localStorage.getItem('fWorkoutCount')) || 0;
+    var startDayOfWeek = parseInt(localStorage.getItem('fStartDay')) || 0;
+
+    var weekDaysNames = ["ראשון", "שני", "שלישי", "רביעי", "חמישי", "שישי", "שבת"];
+    var lifestyleTips = [
+        "שתה היום לפחות 3 ליטר מים! 💧",
+        "שמור על תזונה נקייה - בלי סוכר מעובד היום! 🚫🍬",
+        "הקפד על 7-8 שעות שינה הלילה לטובת השרירים! 🛏️",
+        "הוסף מנת חלבון איכותית לכל ארוחה! 🥚",
+        "הקדש 5 דקות לנשימות עמוקות ומיקוד. 🌬️",
+        "אכול מנת ירקות גדולה שתיתן לך ויטמינים! 🥗"
+    ];
+
+    if (userName && day > 0) showApp();
+
+    function checkLegalAndGo() {
+        if (!document.getElementById('legalCheck').checked) { alert("חובה להסכים לתנאי השימוש."); return; }
+        toStep(2);
+    }
+
+    function toStep(n) {
+        var steps = document.querySelectorAll('.step');
+        for (var i = 0; i < steps.length; i++) steps[i].classList.remove('active');
+        document.getElementById('step' + n).classList.add('active');
+    }
+
+    function toggleDay(el, idx) {
+        el.classList.toggle('selected');
+        var i = trainDays.indexOf(idx);
+        if (i > -1) { trainDays.splice(i, 1); } else { trainDays.push(idx); }
+    }
+
+    function finishQuiz() {
+        userName = document.getElementById('inName').value || "גיבור";
+        loc = document.getElementById('inLoc').value;
+        dur = parseInt(document.getElementById('inDuration').value);
+        pushLv = parseInt(document.getElementById('inPushups').value);
+        pullLv = parseInt(document.getElementById('inPullups').value);
+        goalLv = document.getElementById('inGoal').value;
+        day = 1; level = 1; workoutCounter = 0;
+        if (trainDays.length === 0) { alert("בחר ימי אימון!"); return; }
+        startDayOfWeek = new Date().getDay();
+        localStorage.setItem('fName', userName);
+        localStorage.setItem('fLoc', loc);
+        localStorage.setItem('fDur', dur);
+        localStorage.setItem('fPushups', pushLv);
+        localStorage.setItem('fPullups', pullLv);
+        localStorage.setItem('fGoal', goalLv);
+        localStorage.setItem('fTrainDays', JSON.stringify(trainDays));
+        localStorage.setItem('fStartDay', startDayOfWeek);
+        localStorage.setItem('fDay', day);
+        localStorage.setItem('fLevel', level);
+        localStorage.setItem('fWorkoutCount', workoutCounter);
+        showApp();
+    }
+
+    function showApp() {
+        document.getElementById('quiz-flow').style.display = 'none';
+        document.getElementById('main-app').style.display = 'block';
+        renderContent();
+    }
+
+    function getExerciseDescription(exName) {
+        var whatItIs = "תרגיל התנגדות לפיתוח כוח ומסה.";
+        var howTo = "בצע טווח תנועה מלא עם נשימה נכונה ויציבה חזקה.";
+        if (exName.indexOf("שכיבות סמיכה") > -1) { whatItIs = "עובד על חזה, כתף קדמית ויד אחורית."; howTo = "גוף ישר מראש עד עקב. רד לאט ודחוף בעוצמה."; }
+        else if (exName.indexOf("סקוואט") > -1) { whatItIs = "בונה רגליים וישבן. תנועת הבסיס הכי חשובה."; howTo = "התיישב לאחור, ברכיים לא קורסות פנימה, משקל על העקבים."; }
+        else if (exName.indexOf("מתח") > -1 || exName.indexOf("פולי") > -1) { whatItIs = "מפתח גב (רחב-גבי) ויד קדמית."; howTo = "משוך מרפקים לכיוון הרצפה והוצא חזה."; }
+        else if (exName.indexOf("פלאנק") > -1) { whatItIs = "בונה שרירי ליבה ויציבות."; howTo = "גוף ישר כפלס. כווץ בטן וישבן חזק."; }
+        else if (exName.indexOf("לאנג") > -1) { whatItIs = "עובד על ישבן וירך קדמית."; howTo = "צעד גדול קדימה. רד עד 90 מעלות בשתי הברכיים."; }
+        else if (exName.indexOf("גשר") > -1 || exName.indexOf("היפ טראסט") > -1) { whatItIs = "התרגיל הטוב ביותר לפיתוח ישבן."; howTo = "הרם אגן ודחוף מהעקבים. כווץ ישבן חזק למעלה 2 שניות."; }
+        else if (exName.indexOf("חתירה") > -1) { whatItIs = "עובד על עובי הגב ויד קדמית."; howTo = "גב ישר. משוך לאגן ולא לחזה. כווץ שכמות יחד."; }
+        return "<div class='modal-section-title'>מה זה ועל מה זה עובד?</div><div class='modal-section-content'>" + whatItIs + "</div><div class='modal-section-title'>איך לבצע נכון?</div><div class='modal-section-content'>" + howTo + "</div>";
+    }
+
+    function openModal(exName) {
+        document.getElementById('modalTitle').innerText = exName;
+        document.getElementById('modalDesc').innerHTML = getExerciseDescription(exName);
+        document.getElementById('exerciseModal').style.display = 'flex';
+    }
+
+    function closeModal(modalId) { document.getElementById(modalId).style.display = 'none'; }
+
+    function checkPremiumAccess() {
+        if (localStorage.getItem('premiumUnlocked') === 'true') {
+            document.getElementById('nutritionModal').style.display = 'flex';
+        } else {
+            document.getElementById('unlockModal').style.display = 'flex';
+        }
+    }
+
+    function verifyPremiumCode() {
+        var inputCode = document.getElementById('secretCodeInput').value.trim().toUpperCase();
+        if (inputCode === "LUPU2026") {
+            localStorage.setItem('premiumUnlocked', 'true');
+            closeModal('unlockModal');
+            document.getElementById('nutritionModal').style.display = 'flex';
+        } else {
+            alert("קוד שגוי! נסה שוב או שלח הודעה ללופו לקבלת הקוד.");
+        }
+    }
+
+    function askForCodeWhatsApp() {
+        var myPhoneNumber = "972509344225";
+        var message = "היי לופו, אני משתמש באפליקציה FitGenius AI שלך ואני אשמח לקבל את הקוד הסודי לאזור תוכנית התזונה Premium! 👑";
+        window.open("https://wa.me/" + myPhoneNumber + "?text=" + encodeURIComponent(message), '_blank');
+    }
+
+    function sendToWhatsApp() {
+        var age = document.getElementById('nutAge').value;
+        var weight = document.getElementById('nutWeight').value;
+        var height = document.getElementById('nutHeight').value;
+        var goal = document.getElementById('nutGoalPref').value;
+        var diet = document.getElementById('nutDietType').value;
+        var allergies = document.getElementById('nutAllergies').value || "אין";
+
+        if (!age || !weight || !height) { alert("אנא מלא גיל, משקל וגובה."); return; }
+
+        var myPhoneNumber = "972509344225";
+        var message = "היי לופו, הכנסתי את הקוד LUPU2026 ועכשיו אני שולח לך נתונים לבניית תוכנית תזונה מותאמת אישית! 👑\n\n*הנתונים שלי:*\nשם: " + userName + "\nגיל: " + age + "\nמשקל: " + weight + " ק\"ג\nגובה: " + height + " ס\"מ\nמטרה: " + goal + "\nסגנון תזונה: " + diet + "\nאלרגיות/הערות: " + allergies + "\n\nאשמח לשמוע פרטים על התשלום!";
+
+        window.open("https://wa.me/" + myPhoneNumber + "?text=" + encodeURIComponent(message), '_blank');
+        closeModal('nutritionModal');
+    }
+
+    function renderContent() {
+        var currentVirtualDayOfWeek = (startDayOfWeek + day - 1) % 7;
+        var card = document.getElementById('cardElement');
+        var badge = document.getElementById('dayLabel');
+        var tier = Math.min(pushLv + Math.floor((level - 1) / 2), 3);
+
+        document.getElementById('virtualTime').innerText = "יום: " + weekDaysNames[currentVirtualDayOfWeek];
+        document.getElementById('userHello').innerText = "שלום " + userName + "!";
+        document.getElementById('dayLabel').innerText = "יום " + day;
+        document.getElementById('levelLabel').innerText = "רמה " + level;
+        document.getElementById('dailyTip').innerHTML = "<b>דגש:</b> " + lifestyleTips[day % lifestyleTips.length];
+        document.getElementById('planInfo').innerText = "זמן: " + dur + " דק' | סביבה: " + loc;
+
+        var html = "";
+        var setsAmount = dur >= 60 ? 4 : 3;
+
+        if (trainDays.indexOf(currentVirtualDayOfWeek) > -1) {
+            card.classList.remove('learning-card');
+            badge.className = 'day-badge';
+
+            var isUpper = workoutCounter % 2 === 0;
+
+            if (goalLv === "toning_f") {
+                if (isUpper) {
+                    html += "<div class='ex-item'><b>💪 פלג גוף עליון (עיצוב)</b></div>";
+                    var pullEx = loc === "חדר כושר" ? "פולי עליון רחב / חתירה קלה" : "חתירה אוסטרלית עם מגבת";
+                    var pushEx = loc === "בית" ? "שכיבות סמיכה (על הברכיים)" : "לחיצת חזה משקולות (קל)";
+                    html += "<div class='ex-item clickable' onclick=\"openModal('" + pullEx + "')\"><b>" + pullEx + "</b><span>" + setsAmount + " סטים | 15 חזרות</span></div>";
+                    html += "<div class='ex-item clickable' onclick=\"openModal('" + pushEx + "')\"><b>" + pushEx + "</b><span>" + setsAmount + " סטים | 12 חזרות</span></div>";
+                    html += "<div class='ex-item clickable' onclick=\"openModal('הרחקת כתפיים')\"><b>הרחקת כתפיים (משקל קל)</b><span>3 סטים | 15 חזרות</span></div>";
+                    html += "<div class='ex-item clickable' onclick=\"openModal('פשיטת מרפקים')\"><b>פשיטת מרפקים (יד אחורית)</b><span>3 סטים | 15 חזרות</span></div>";
+                } else {
+                    html += "<div class='ex-item'><b>🦵 פלג גוף תחתון - עיצוב ישבן ורגליים</b></div>";
+                    var gluteEx = loc === "חדר כושר" ? "היפ טראסט במוט" : "גשר ישבן / היפ טראסט על ספה";
+                    var rdlEx = loc === "חדר כושר" ? "דדליפט רומני (RDL) משקולות" : "דדליפט רגל אחת (משקל גוף)";
+                    var bulgEx = loc === "בית" ? "סקוואט בולגרי רגל על כיסא" : "סקוואט בולגרי משקולות";
+                    html += "<div class='ex-item clickable' onclick=\"openModal('" + gluteEx + "')\"><b>" + gluteEx + "</b><span>" + setsAmount + " סטים | 12-15 חזרות</span></div>";
+                    html += "<div class='ex-item clickable' onclick=\"openModal('" + rdlEx + "')\"><b>" + rdlEx + "</b><span>" + setsAmount + " סטים | 12 חזרות</span></div>";
+                    html += "<div class='ex-item clickable' onclick=\"openModal('" + bulgEx + "')\"><b>" + bulgEx + "</b><span>3 סטים | 10 לכל רגל</span></div>";
+                    html += "<div class='ex-item clickable' onclick=\"openModal('פלאנק')\"><b>פלאנק / קראנצ'ים</b><span>3 סטים | 60 שניות / עד כשל</span></div>";
+                }
+            } else {
+                var splitName = isUpper ? "פלג גוף עליון (Upper Body)" : "פלג גוף תחתון ובטן (Lower Body)";
+                html += "<div class='ex-item'><b>💪 אימון יומי: " + splitName + "</b></div>";
+
+                if (isUpper) {
+                    var pullEx2 = loc === "חדר כושר" ? (pullLv === 0 ? "פולי עליון אחיזה רחבה" : pullLv === 1 ? "מתח בגרביטרון" : "מתח רחב חופשי") : "חתירה אוסטרלית";
+                    var pushOptions = loc === "בית" ? ["שכיבות סמיכה בשיפוע עליון", "שכיבות סמיכה קלאסיות", "שכיבות סמיכה יהלום", "שכיבות סמיכה עם מחיאת כף"] : ["לחיצת חזה משקולות קלות", "לחיצת חזה מוט חופשי", "לחיצת חזה שיפוע חיובי מוט", "לחיצת חזה מוט כבד"];
+                    var shoulderOptions = loc === "בית" ? ["פלאנק 45 שניות", "שכיבות סמיכה פייק", "שכיבות סמיכה פייק עמוקות", "עמידת ידיים נגד קיר"] : ["לחיצת כתפיים מכונה", "לחיצת כתפיים משקולות", "לחיצה צבאית מוט", "לחיצת ארנולד משקולות"];
+                    var tricepsOptions = loc === "בית" ? ["טבילות יד אחורית ברכיים כפופות", "טבילות יד אחורית רגליים ישרות", "טבילות עם רגל באוויר", "טבילות עמוקות בין כיסאות"] : ["פשיטת מרפקים פולי חבל", "לחיצה צרפתית מוט W", "מקבילים (Dips) בגרביטרון", "מקבילים משקל גוף"];
+
+                    html += "<div class='ex-item clickable' onclick=\"openModal('" + pullEx2 + "')\"><b>" + pullEx2 + "</b><span>" + setsAmount + " סטים | 8-12 חזרות</span></div>";
+                    html += "<div class='ex-item clickable' onclick=\"openModal('" + pushOptions[tier] + "')\"><b>" + pushOptions[tier] + "</b><span>" + setsAmount + " סטים | 12 חזרות</span></div>";
+                    html += "<div class='ex-item clickable' onclick=\"openModal('" + shoulderOptions[tier] + "')\"><b>" + shoulderOptions[tier] + "</b><span>" + setsAmount + " סטים | 10-12 חזרות</span></div>";
+                    html += "<div class='ex-item clickable' onclick=\"openModal('" + tricepsOptions[tier] + "')\"><b>" + tricepsOptions[tier] + "</b><span>3 סטים | 12 חזרות</span></div>";
+
+                    if (dur >= 90) {
+                        html += "<div class='ex-item clickable' onclick=\"openModal('כפיפת מרפקים')\"><b>כפיפת מרפקים (Biceps)</b><span>3 סטים | 12 חזרות</span></div>";
+                    }
+                } else {
+                    var quadOptions = loc === "בית" ? ["חצי סקוואט", "סקוואט מלא", "סקוואט קפיצה", "פיסטול סקוואט"] : ["לחיצת רגליים מכונה", "סקוואט מוט סמית'", "סקוואט מוט חופשי", "פרונט סקוואט"];
+                    var hamOptions = loc === "בית" ? ["גשר ישבן רגיל", "גשר ישבן שהייה 2 שניות", "גשר ישבן רגל אחת", "קפיצות צפרדע רחבות"] : ["כפיפת ברכיים מכונה", "דדליפט רומני משקולות יד", "דדליפט רומני מוט", "לאנגים הליכה עם משקל"];
+                    var absOptions = loc === "בית" ? ["קראנצ'ים קטנים", "כפיפות בטן מלאות", "הרמות רגליים בשכיבה", "V-Ups (אולר)"] : ["כפיפות בטן בשיפוע", "הרמות ברכיים בתלייה", "הרמות רגליים ישרות בתלייה", "כפיפות בטן פולי עליון"];
+
+                    html += "<div class='ex-item clickable' onclick=\"openModal('" + quadOptions[tier] + "')\"><b>" + quadOptions[tier] + "</b><span>" + setsAmount + " סטים | 12-15 חזרות</span></div>";
+                    html += "<div class='ex-item clickable' onclick=\"openModal('" + hamOptions[tier] + "')\"><b>" + hamOptions[tier] + "</b><span>" + setsAmount + " סטים | 12 חזרות</span></div>";
+                    html += "<div class='ex-item clickable' onclick=\"openModal('לאנגים')\"><b>לאנג'ים במקום / סקוואט בולגרי</b><span>3 סטים | 10-12 לכל רגל</span></div>";
+                    html += "<div class='ex-item clickable' onclick=\"openModal('" + absOptions[tier] + "')\"><b>" + absOptions[tier] + "</b><span>3 סטים | 15 חזרות</span></div>";
+
+                    if (dur >= 90) {
+                        html += "<div class='ex-item clickable' onclick=\"openModal('תאומים')\"><b>עליית תאומים (Calves)</b><span>4 סטים | 20 חזרות</span></div>";
+                    }
+                }
+            }
+        } else {
+            card.classList.add('learning-card');
+            badge.className = 'day-badge learning-badge';
+            var pages = 10 + (level * 5);
+            var tasks = [
+                "קרא " + pages + " עמודים בספר שלך וסכם בכתב את התובנה הכי חשובה.",
+                "הקדש 30 דקות לקריאת ספר התפתחות אישית ונסה ליישם רעיון אחד היום.",
+                "קרא פרק שלם בספר וכתוב 3 דברים שאתה יכול לשפר בעצמך.",
+                "קריאה רצופה ללא שום הסחות דעת (טלפון על מצב טיסה!).",
+                "קרא " + pages + " עמודים ונסה להסביר את התוכן למישהו אחר."
+            ];
+            html += "<div class='ex-item learning-item'><b>📚 המשימה שלך (רמה " + level + "):</b><span>" + tasks[day % tasks.length] + "</span></div>";
+        }
+
+        document.getElementById('workoutList').innerHTML = html;
+        document.getElementById('progressFill').style.width = ((day - 1) / 30 * 100) + "%";
+        document.getElementById('progressStat').innerText = (day - 1) + "/30 ימים הושלמו";
+    }
+
+    function completeDay() {
+        var currentVirtualDayOfWeek = (startDayOfWeek + day - 1) % 7;
+        if (trainDays.indexOf(currentVirtualDayOfWeek) > -1) {
+            workoutCounter++;
+            localStorage.setItem('fWorkoutCount', workoutCounter);
+        }
+        if (day < 30) {
+            day++;
+            localStorage.setItem('fDay', day);
+            renderContent();
+            window.scrollTo(0, 0);
+        } else {
+            level++; day = 1;
+            localStorage.setItem('fLevel', level);
+            localStorage.setItem('fDay', day);
+            alert("כל הכבוד! עלית לרמה " + level + ". תן בראש!");
+            renderContent();
+            window.scrollTo(0, 0);
+        }
+    }
+
+    function resetApp() {
+        localStorage.clear();
+        window.location.href = window.location.href.split('?')[0];
+    }
+</script>
+</body>
+</html>
